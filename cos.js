@@ -901,6 +901,7 @@ module.exports = function(RED) {
 			var bucket;
 			var maxkeys = node.maxkeys || msg.maxkeys;
 			var config;
+			var prefix = "";
 
 			// Help Debug
 			console.log("Cloud Object Storage Qry (log): Init done");
@@ -920,6 +921,11 @@ module.exports = function(RED) {
 				objectname = msg.objectname;
 			} else {
 				objectname = node.objectname;
+			}
+			
+			// Check prefix
+			if ((msg.objectprefix) && (msg.objectprefix.trim() !== "")) {
+				prefix = msg.objectprefix.trim();
 			}
 
 			// Check bucket
@@ -973,7 +979,8 @@ module.exports = function(RED) {
 				// List of all objects
 				cos.listObjects({
 					Bucket: bucket,
-					MaxKeys: maxkeys
+					MaxKeys: maxkeys,
+					Prefix: prefix
 					//				Key: objectname
 				}, function(err, data) {
 					if (err) {
